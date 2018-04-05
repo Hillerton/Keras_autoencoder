@@ -48,7 +48,7 @@ class layer_metrics:
 
     def weights(model, layer_name):
 
-        layer = layer_name
-        weights = [layer.get_weights() for layer in model.layers if layer.name == layer_name]
-        array_weights = np.asarray(weights)
-        return array_weights
+        for layer in model.layers:
+            if layer.name == layer_name:
+                weights = layer.get_weights()
+        return weights

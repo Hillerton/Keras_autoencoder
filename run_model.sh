@@ -18,14 +18,14 @@
 
 DATE=`date +%Y-%m-%d`
 
-nodes=64
+nodes=128
 epoch=10
-infile=/home/hillerton/Data/intersect_1000g_cancer/212_cancer/bed_files
+train_files=/home/hillerton/Data/intersect_1000g_cancer/1000_genome/bed_files
+test_files=/home/hillerton/Data/intersect_1000g_cancer/212_cancer/bed_files
 outdir=/home/hillerton/results
 logfile=$outdir"/"$DATE"_autoencoder_run"
-model=NULL
-pheno=/home/t/thohi921/pfs/test_data/cancer_filtered_bed/exome_phenotype.txt
 noise=0.001
+
 
 mkdir -p $outdir >>/dev/null
 
@@ -34,6 +34,4 @@ then
   touch $logfile
 fi
 
-#python3 init_autoencoder.py $infile $nodes $epoch --out $outdir --log $logfile --subset $subset  --model $model --regression True --phenotypes $pheno #local
-
-python3 init_autoencoder.py $infile $nodes $epoch --out $outdir --log $logfile --model $model --phenotypes $pheno --noise $noise #cluster based
+python3 run_autoencoder.py $train_files $test_files $nodes $epoch --out $outdir --log $logfile --noise $noise --subset 5000

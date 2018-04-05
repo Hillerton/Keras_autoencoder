@@ -17,11 +17,11 @@ class make_log:
         print("Program for runing an autoencoder on SNV data\nInitiated at:", today, "\n", file=log_file)
         print("see -h or --help for options\n",file=log_file)
         print("#"*60+"_SETTINGS_"+"#"*60, "\n",file=log_file)
-        print("Input files: ", args.file_name+".bim/bam/fam\n", file=log_file)
+        print("Train files: ", args.train_file+".bim/bam/fam\n", file=log_file)
+        print("Test files: ", args.test_file+".bim/bam/fam\n", file=log_file)
         print("Number of nodes used:", args.hidden_nodes, "\n",file=log_file)
         print("Number of epochs:", args.epochs, "\n", file=log_file)
         print("Output data stored at: ", args.out_path, "\n",file=log_file)
-        print("Program handeling input data as: ", args.data_type,"\n", file=log_file)
         print("#"*131,"\n",file=log_file)
-        
+
         log_file.close
