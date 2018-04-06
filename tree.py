@@ -10,27 +10,27 @@ class NearestGene:
 
         self.gene_locations = gene_locations
 
-    def nearest(self, chr, pos):
+    def nearest(self, chrom, pos):
         """Args:
-            chr (int): Chromosome
-            pos (int): Base pair position withing the chromosome
+            chrom (int): chromomosome
+            pos (int): Base pair position withing the chromomosome
         """
 
-        chr_genes = self.gene_locations[chr]
-        return self.find_nearest(chr_genes, 0, len(chr_genes), pos)
+        chrom_genes = self.gene_locations[chrom]
+        return self.find_nearest(chrom_genes, 0, len(chrom_genes), pos)
 
-    def find_nearest(self, chr_genes, start, stop, pos):
+    def find_nearest(self, chrom_genes, start, stop, pos):
         middle = int((start+stop)/2)
-        # print(middle, start, stop, pos)
+        
         if start == middle:
-            return self.nearest_neighbour(chr_genes, pos, start)
-        if chr_genes[middle, START] >= pos:
-            return self.find_nearest(chr_genes, start, middle, pos)
+            return self.nearest_neighbour(chrom_genes, pos, start)
+        if chrom_genes[middle, START] >= pos:
+            return self.find_nearest(chrom_genes, start, middle, pos)
         else:
-            return self.find_nearest(chr_genes, middle, stop, pos)
+            return self.find_nearest(chrom_genes, middle, stop, pos)
 
-    def nearest_neighbour(self, chr_genes, pos, start):
-        if start+1 >= len(chr_genes) or pos - chr_genes[start, STOP] < chr_genes[start+1, START] - pos:
-            return chr_genes[start, GENE_ID]
+    def nearest_neighbour(self, chrom_genes, pos, start):
+        if start+1 >= len(chrom_genes) or pos - chrom_genes[start, STOP] < chrom_genes[start+1, START] - pos:
+            return chrom_genes[start, GENE_ID]
         else:
-            return chr_genes[start+1, GENE_ID]
+            return chrom_genes[start+1, GENE_ID]
