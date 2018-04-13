@@ -34,4 +34,4 @@ then
   touch $logfile
 fi
 
-python3 run_autoencoder.py $train_files $test_files $nodes $epoch --out $outdir --log $logfile --noise $noise --subset 5000
+python3 run_autoencoder.py $train_files $test_files $nodes $epoch --out $outdir --log $logfile --noise $noise #--subset 5000

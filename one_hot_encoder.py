@@ -18,7 +18,7 @@ class biallelic_to_onehot:
         (bim, fam, bed) = read_bed_files(files)
 
         if cutoff != False:
-            bed = bed[:int(cutoff),] #obs must be removed for any real test. only used to limit data scale for local testing
+            bed = bed[:int(cutoff),]
 
         bed=bed.astype('float32')
         flat_bed = np.reshape(bed, np.prod(bed.shape))
@@ -27,4 +27,4 @@ class biallelic_to_onehot:
         col_ix = flat_bed[row_ix].astype(np.int)
         flat_cls[row_ix, col_ix] = 1.0
         cls = np.reshape(flat_cls, bed.shape+(3,))
-        return cls
+        return (cls, bim)

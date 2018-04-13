@@ -15,6 +15,7 @@ import time
 import os
 from make_log import make_log
 import numpy as np
+import pandas
 
 today = time.strftime("%Y-%m-%d")
 
@@ -61,9 +62,14 @@ from keras_autoencoder_model import keras_autoencoder
 import keras
 
 print("Finding traning data")
-traning_data = biallelic_to_onehot.onehot(args.train_file, args.sub)
+traning_data, bim_null = biallelic_to_onehot.onehot(args.train_file, args.sub)
 print ("Finding test data")
-test_data = biallelic_to_onehot.onehot(args.test_file, args.sub)
+test_data, bim = biallelic_to_onehot.onehot(args.test_file, args.sub)
+
+master_bim = out_path+"/master_bim.bim"
+with open(master_bim, 'w+') as bimfil:
+    bim.to_csv(bimfil, sep="\t")
+bimfil.close()
 
 train = round(traning_data.shape[1]*0.8)
 

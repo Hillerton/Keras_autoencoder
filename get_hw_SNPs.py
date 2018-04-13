@@ -16,7 +16,7 @@ def get_weights(model, layer_name):
 path = "/home/hillerton/results/2018-04-05_ae_test/"
 model = path+"AE_model.h5"
 dict_file = "/home/hillerton/Data/ref_genes/human_GCRh38_swiss_prot_ID.csv"
-bim_path = "/home/hillerton/Data/intersect_1000g_cancer/212_cancer/bed_files"
+bim_in = "/home/hillerton/results/2018-04-09_ae_test/master_bim.bim"
 
 ae_model = load_model(model)
 weight = get_weights(ae_model, "dense_1")
@@ -40,30 +40,28 @@ with open(dict_file, 'r') as fil:
             q = np.array((split_line[0], int(split_line[3]), int(split_line[4])))
             q = np.reshape(q, (1,3))
             gene_dict[split_line[2]] = np.concatenate((gene_dict[split_line[2]], q), axis=0)
-"""
+
 nearest_gene=[]
 
-for chrom in chromomosomes:
-    print ("working on chromosome", chrom)
-    bim_file = bim_path+"/chr"+chrom+".bim"
-    with open(bim_file, "r") as bim:
-        count = 0
-        for line in bim:
+
+bim_file = bim_in
+with open(bim_file, "r") as bim:
+    header = bim.readline()
+    for line in bim:
+        for chrom in chromomosomes:
+
             line = line.strip("\n")
             split_line = line.split("\t")
-            pos = int(split_line[3])
-            for val in gene_dict[chrom]:
-                if pos in range(int(val[1]), int(val[2])):
-                    gene = (str(count)+"\t"+val[0]+"\t"+val[1]+"\t"+val[2]+"\t"+line)
-                    nearest_gene.append(gene)
-            count+=1
-
-for i in nearest_gene:
-    print (i)
+            pos = int(split_line[4])
+            if split_line[1] == chrom:
+                for val in gene_dict[chrom]:
+                    if pos in range(int(val[1]), int(val[2])):
+                        gene = (val[0]+"\t"+val[1]+"\t"+val[2]+"\t"+line)
+                        nearest_gene.append(gene)
 
 #            gene = NearestGene(gene_dict).nearest(chrom, pos)
 #            print (chrom, gene)
-"""
+
 
 weight = np.reshape(weight[0], (5000, 3, 128))
 weight = np.swapaxes(weight, 2, 0)
@@ -76,18 +74,17 @@ for line in weight:
     up_cut = node_mean + 2 * std_err
     low_cut = node_mean - 2 * std_err
 
-    for i in line:
-        count = 0
+    for i,name in zip(line, nearest_gene):
 
         for z in i:
-            count += 1
 
             if z > up_cut or z < low_cut:
                 if node_count not in hw.keys():
-                    hw[node_count] = [count, z]
+                    hw[node_count] = [name, z]
                 else :
-                    hw[node_count].append([count, z])
+                    hw[node_count].append([name, z])
 
     node_count += 1
 
-print (hw)
+for i in hw.keys():
+    print (hw[i])
