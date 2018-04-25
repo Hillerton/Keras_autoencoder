@@ -20,7 +20,8 @@ class keras_autoencoder:
         input = Input(shape=(nr_features, nr_classes))
 
         lyr = Reshape((tot_features,))(input)
-        lyr = Dropout(noise)(lyr)
+         lyr = Dropout(noise)(lyr)
+
         lyr = Dense(nr_hidden, activation="linear")(lyr)
         lyr = advanced_activations.LeakyReLU()(lyr)
 
@@ -65,5 +66,5 @@ class keras_autoencoder:
         reg_mod.compile(optimizer="adam", loss="mean_squared_error", metrics=['mse','mae'])
 
         reg_mod.fit(x_train, y_train, epochs=epochs, batch_size=32, shuffle=True, verbose=2, validation_data=(x_val, y_val), callbacks=[tb])
-        reg_mod.save(path+"/regression_model.h5")
+        reg_mod.save(path+"/regression/regression_model.h5")
         return (reg_mod)

@@ -8,7 +8,7 @@ from get_activation import get_activations
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
-path = "/home/hillerton/results/2018-04-05_ae_test/"
+path = "/home/hillerton/results/2018-03-29_ae_keras_run/deep_ae/"
 model = path+"AE_model.h5"
 
 ae_model = load_model(model)
@@ -30,7 +30,6 @@ for line in weight[0]:
 
 #weight = np.swapaxes(weight[0], 1, 0)
 
-"""
 pca = PCA(n_components=3, svd_solver="randomized")
 out = pca.fit_transform(weight[0])
 print (out.shape)
@@ -38,5 +37,5 @@ print (out.shape)
 colors = ['navy', 'turquoise', 'darkorange']
 plt.figure(figsize=(8, 8))
 plt.scatter(out[:, 0], out[:, 1], out[:, 2], color=colors)
+print ("showing image")
 plt.show()
-"""

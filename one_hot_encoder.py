@@ -13,7 +13,7 @@ from find_all_bed import find_bed_files, read_bed_files
 class biallelic_to_onehot:
     def onehot(file_prefix, cutoff=False):
 
-        #(bim, fam, bed) = read_plink(data, verbose=False)
+        #(bim, fam, bed) = read_plink(file_prefix, verbose=False)
         files = find_bed_files(file_prefix+"/*")
         (bim, fam, bed) = read_bed_files(files)
 

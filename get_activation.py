@@ -1,4 +1,9 @@
 import keras.backend as K
+import keras
+import numpy as np
+from keras.models import load_model
+from get_layer_metrics import layer_metrics
+from one_hot_encoder import biallelic_to_onehot
 
 def get_activations(model, model_inputs, print_shape_only=False, layer_name=None):
     #print('----- activations -----')
@@ -33,42 +38,21 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
             #print(layer_activations.shape)
         else:
             pass
-            
-            #print(layer_activations)
+
     return activations
 
+path = "/home/hillerton/results/2018-03-29_ae_keras_run/deep_ae/regression/"
+model = path+"regression_model.h5"
+data = "/home/hillerton/Data/intersect_1000g_cancer/212_cancer/bed_files/"
 
-def display_activations(activation_maps):
-    import numpy as np
-    import matplotlib.pyplot as plt
-    """
-    (1, 26, 26, 32)
-    (1, 24, 24, 64)
-    (1, 12, 12, 64)
-    (1, 12, 12, 64)
-    (1, 9216)
-    (1, 128)
-    (1, 128)
-    (1, 10)
-    """
-    batch_size = activation_maps[0].shape[0]
-    #assert batch_size == 1, 'One image at a time to visualize.'
-    for i, activation_map in enumerate(activation_maps):
-        print('Displaying activation map {}'.format(i))
-        shape = activation_map.shape
-        if len(shape) == 4:
-            activations = np.hstack(np.transpose(activation_map[0], (2, 0, 1)))
-        elif len(shape) == 2:
-            # try to make it square as much as possible. we can skip some activations.
-            activations = activation_map[0]
-            num_activations = len(activations)
-            if num_activations > 1024:  # too hard to display it on the screen.
-                square_param = int(np.floor(np.sqrt(num_activations)))
-                activations = activations[0: square_param * square_param]
-                activations = np.reshape(activations, (square_param, square_param))
-            else:
-                activations = np.expand_dims(activations, axis=0)
-        else:
-            raise Exception('len(shape) = 3 has not been implemented.')
-        plt.imshow(activations, interpolation='None', cmap='jet')
-        plt.show()
+ae_model = load_model(model)
+
+bed_data, bim = biallelic_to_onehot.onehot(data)
+bed_data = np.swapaxes(bed_data, 0, 1)
+
+activation = get_activations(ae_model, bed_data, layer_name="leaky_re_lu_1")
+
+fil = open(path+"leaky_relu_activation.csv", "a+")
+
+for i in activation:
+    np.savetxt(fil, i, delimiter="\t")

@@ -19,8 +19,8 @@
 DATE=`date +%Y-%m-%d`
 
 nodes=128
-epoch=10
-train_files=/home/hillerton/Data/intersect_1000g_cancer/1000_genome/bed_files
+epoch=100
+train_files=/home/hillerton/Data/intersect_1000g_cancer/1000_genome/bed_files/chr6
 test_files=/home/hillerton/Data/intersect_1000g_cancer/212_cancer/bed_files
 outdir=/home/hillerton/results
 logfile=$outdir"/"$DATE"_autoencoder_run"

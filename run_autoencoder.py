@@ -62,9 +62,9 @@ from keras_autoencoder_model import keras_autoencoder
 import keras
 
 print("Finding traning data")
-traning_data, bim_null = biallelic_to_onehot.onehot(args.train_file, args.sub)
+traning_data, bim = biallelic_to_onehot.onehot(args.train_file, args.sub)
 print ("Finding test data")
-test_data, bim = biallelic_to_onehot.onehot(args.test_file, args.sub)
+#test_data, bim = biallelic_to_onehot.onehot(args.test_file, args.sub)
 
 master_bim = out_path+"/master_bim.bim"
 with open(master_bim, 'w+') as bimfil:
@@ -92,10 +92,10 @@ y_train = np.swapaxes(y_train, 0 ,1)
 y_val = np.swapaxes(y_val, 0, 1)
 """
 
-traning_data = np.swapaxes(traning_data, 1, 0)
-test_data = np.swapaxes(test_data, 1, 0)
+#traning_data = np.swapaxes(traning_data, 1, 0)
+#test_data = np.swapaxes(test_data, 1, 0)
 
-ae_model.fit_model(traning_data, test_data, args.epochs, tb)
+ae_model.fit_model(x_train, x_val, args.epochs, tb)
 ae_model.save(out_path)
 
 log_file.close

@@ -60,23 +60,24 @@ else :
 if not glob.glob(out_path):
     os.makedirs(out_path)
 
-make_log(args,log_dir)
+#make_log(args,log_dir)
 
 log_file = open(args.log, "a")
 
 in_file = args.file_name
 
 from one_hot_encoder import biallelic_to_onehot
-from deep_keras_autoencoder import keras_autoencoder
+#from deep_keras_autoencoder import keras_autoencoder
+from keras_autoencoder_model import keras_autoencoder
 import keras
 import tensorflow as tf
 
 if args.data_type == "biallelic":
-    data = biallelic_to_onehot.onehot(in_file, args.sub)
-elif args.data_type == "onehot":
-    data = numpy.genfromtxt(in_file)
-else:
-    print ("data_type must be sett to \"biallelic\" or \"onehot\", run terminated due to unrecognised data type.\n See help for options", file=log_file)
+    data, bim = biallelic_to_onehot.onehot(in_file, args.sub)
+#elif args.data_type == "onehot":
+#    data = numpy.genfromtxt(in_file)
+#else:
+#    print ("data_type must be sett to \"biallelic\" or \"onehot\", run terminated due to unrecognised data type.\n See help for options", file=log_file)
 
 train = round(data.shape[1]*0.8)
 
@@ -128,7 +129,7 @@ if args.regression == "True":
             e.append(0.0)
         else:
             e.append(i)
-    lpk=np.asarray(e)
+    lpk=np.asarray(e, dtype="float32")
     lpk=np.reshape(lpk, (-1, 1))
     #lpk = preprocessing.normalize(lpk, axis=0, norm='max')
 
@@ -138,7 +139,7 @@ if args.regression == "True":
             e.append(0.0)
         else:
             e.append(i)
-    npk=np.asarray(e)
+    npk=np.asarray(e, dtype="float32")
     npk=np.reshape(npk, (-1, 1))
     #npk = preprocessing.normalize(npk, axis=0, norm='max')
 
@@ -148,15 +149,20 @@ if args.regression == "True":
             e.append(0.0)
         else:
             e.append(i)
-    tpk=np.asarray(e)
+    tpk=np.asarray(e, dtype="float32")
     tpk=np.reshape(tpk, (-1, 1))
     #tpk = preprocessing.normalize(tpk, axis=0, norm='max')
 
     labels = np.dstack((lpk, npk, tpk))
     labels = np.swapaxes(labels, 0, 1)
-    pheno_out=open(out_path+"/regression/"+"read_blood_values.csv", 'w+')
-    print (labels, file=pheno_out)
+    pheno_out = open(out_path+"/regression/blood_values.csv", 'w+')
+    print_label = labels.reshape(-1, labels.shape[-1])
+    np.savetxt(pheno_out, print_label, delimiter="\t")
     pheno_out.close
+
+    y_cut = round(labels.shape[1]*0.8)
+    idx = np.random.choice(labels.shape[1], y_cut, replace=False)
+
 
     y_train = labels[:, idx]
     y_train = y_train.reshape(-1, y_train.shape[-1])
@@ -168,7 +174,7 @@ if args.regression == "True":
     x_reg = np.swapaxes(data, 0, 1)
     x_reg = [x_reg]
     score = reg_mod.predict(x_reg, batch_size=1)
-    regfile = out_path+"/regression/"+"regularexpression.csv"
+    regfile = out_path+"/regression/"+"regression.csv"
     np.savetxt(regfile, score, delimiter="\t")
 
 else:

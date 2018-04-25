@@ -18,13 +18,13 @@
 
 DATE=`date +%Y-%m-%d`
 
-nodes=64
-epoch=10
-infile=/home/hillerton/Data/intersect_1000g_cancer/212_cancer/bed_files
+nodes=128
+epoch=100
+infile=/home/hillerton/Data/intersect_1000g_cancer/1000_genome/bed_files
 outdir=/home/hillerton/results
 logfile=$outdir"/"$DATE"_autoencoder_run"
-model=NULL
-pheno=/home/t/thohi921/pfs/test_data/cancer_filtered_bed/exome_phenotype.txt
+model=/home/hillerton/results/2018-03-29_ae_keras_run/deep_ae/AE_model.h5
+pheno=/home/hillerton/Data/cancer_patient_exome_seq/exome_phenotype.txt
 noise=0.001
 
 mkdir -p $outdir >>/dev/null
