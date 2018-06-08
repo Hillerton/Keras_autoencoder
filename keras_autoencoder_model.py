@@ -20,7 +20,7 @@ class keras_autoencoder:
         input = Input(shape=(nr_features, nr_classes))
 
         lyr = Reshape((tot_features,))(input)
-         lyr = Dropout(noise)(lyr)
+        lyr = Dropout(noise)(lyr)
 
         lyr = Dense(nr_hidden, activation="linear")(lyr)
         lyr = advanced_activations.LeakyReLU()(lyr)

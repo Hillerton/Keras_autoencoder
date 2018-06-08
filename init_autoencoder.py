@@ -18,6 +18,7 @@ import numpy as np
 
 today = time.strftime("%Y-%m-%d")
 
+#captures comand line arguments through arg.parser
 parser = argparse.ArgumentParser(description="Script to run an autoencoder on one hot encoded or biallelic genetic SNV data")
 parser.add_argument("file_name", action="store",
                     help="Gives the program the name of the name of the bed/bim/fam files to look for. Doesn\"t need the the file extension only name")
@@ -50,7 +51,7 @@ parser.add_argument("--phenotypes", dest="phenotype", action="store", default=Fa
 
 args = parser.parse_args()
 
-out_path=args.out_path+"/"+today+"_ae_test"
+out_path=args.out_path+"/"+today+"_ae_test/"+str(args.hidden_nodes)+"/"
 
 if args.log_path == False:
     log_dir = out_path
@@ -74,11 +75,13 @@ import tensorflow as tf
 
 if args.data_type == "biallelic":
     data, bim = biallelic_to_onehot.onehot(in_file, args.sub)
+#redundant code as no onehot encoded data was saved but should be functional
 #elif args.data_type == "onehot":
 #    data = numpy.genfromtxt(in_file)
 #else:
 #    print ("data_type must be sett to \"biallelic\" or \"onehot\", run terminated due to unrecognised data type.\n See help for options", file=log_file)
 
+#section to split data 80/20 for traning and validation 
 train = round(data.shape[1]*0.8)
 
 idx = np.random.choice(data.shape[1], train, replace=False)
@@ -89,10 +92,13 @@ x_val = np.delete(data, idx, 1)
 x_train = np.swapaxes(x_train, 0 ,1)
 x_val = np.swapaxes(x_val, 0, 1)
 
+#section to set what meta data should be recorded for the created model
+#tb is for 
 tb = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1, write_graph=True, write_images=False, embeddings_metadata=True)
 tb2 = keras.callbacks.TensorBoard(log_dir=log_dir+"/regression", histogram_freq=1, write_graph=True, write_images=False, embeddings_metadata=True)
 
 if args.regression == False:
+#trains a initial autoencoder model on the given data 
     ae_model = keras_autoencoder(3, data.shape[0], args.hidden_nodes, args.l1, args.noise)
 
     ae_model.fit_model(x_train, x_val, args.epochs, tb)
@@ -100,6 +106,8 @@ if args.regression == False:
 
 
 if args.regression == "True":
+#trains a regression modle using the first weight matrix of given model. 
+#requieres both input data and a previously trained model to run 
     if not glob.glob(out_path+"/regression"):
         os.makedirs(out_path+"/regression")
 

@@ -1,5 +1,5 @@
 """
-script to get activation and shape of
+script to get activation and shape of layer
 """
 
 import keras

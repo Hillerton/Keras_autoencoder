@@ -1,11 +1,11 @@
 """
-Script for picking out heigh weight SNPs and closes gene to the SNPs
+Script for picking out variation (highe weight) SNPs from hidden nodes 
+it the associate the SNVs found to the gene they recide within
 """
 
 import keras
 from keras.models import load_model
 import numpy as np
-from tree import NearestGene
 import time
 import os
 import glob
@@ -18,11 +18,12 @@ def get_weights(model, layer_name):
 
 today = time.strftime("%Y-%m-%d")
 
-path = "/home/hillerton/results/2018-04-18_ae_test/"
+path = "/home/hillerton/results/2018-04-26_ae_test/"
 model = path+"AE_model.h5"
 dict_file = "/home/hillerton/Data/ref_genes/human_GCRh38_all_genes_NCBI_ID.csv"
-bim_in = "/home/hillerton/results/2018-04-18_ae_test/master_bim.bim"
+bim_in = "/home/hillerton/results/2018-04-26_ae_test/master_bim.bim"
 out_path = "/home/hillerton/results/"
+wanted_wegith = "dense_1"
 
 out_fil = out_path+today+"_high_weight_SNVs/"
 if not glob.glob(out_fil):
@@ -30,7 +31,7 @@ if not glob.glob(out_fil):
 
 ae_model = load_model(model)
 
-weight = get_weights(ae_model, "dense_1")
+weight = get_weights(ae_model, wanted_weight)
 np.savetxt(path+"weights.csv", weight[0], delimiter="\t")
 
 gene_dict = {}
@@ -57,7 +58,7 @@ nearest_gene=[]
 bim_file = bim_in
 
 with open(bim_file, "r") as bim:
-    SNV_number=0
+    SNV_number=1
     header = bim.readline()
     for line in bim:
         SNV_number+=1
@@ -77,7 +78,7 @@ with open(bim_file, "r") as bim:
 
 
 
-weight = np.reshape(weight[0], (SNV_number, 3, 128))
+weight = np.reshape(weight[0], (SNV_number, 3, 254))
 weight = np.swapaxes(weight, 2, 0)
 
 

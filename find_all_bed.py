@@ -1,3 +1,6 @@
+"""
+supporting function that captures and merges bed files for any analysis that should be performed on several files
+"""
 
 import numpy as np
 import os, errno

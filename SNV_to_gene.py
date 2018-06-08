@@ -1,3 +1,7 @@
+"""
+script designed to convert SNVs in to genes based on genomic position
+"""
+
 import numpy as np
 import os
 import glob

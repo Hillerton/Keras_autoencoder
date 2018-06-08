@@ -1,3 +1,9 @@
+"""
+script for extarcting activation from a given layer in a keras model
+the extraction builds on layer name which can be obtained via tensorboard graph page
+2018 Thomas Hillerton 
+"""
+
 import keras.backend as K
 import keras
 import numpy as np
@@ -6,7 +12,9 @@ from get_layer_metrics import layer_metrics
 from one_hot_encoder import biallelic_to_onehot
 
 def get_activations(model, model_inputs, print_shape_only=False, layer_name=None):
-    #print('----- activations -----')
+    
+    #function to cpature the activation by running the input data through the model and capturing specificed layer values 
+    #OBS does run full model do not run large datasets on computers with low memory
     activations = []
     inp = model.input
 
@@ -28,8 +36,6 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
     else:
         list_inputs = [model_inputs, 0.]
 
-    # Learning phase. 0 = Test mode (no dropout or batch normalization)
-    # layer_outputs = [func([model_inputs, 0.])[0] for func in funcs]
     layer_outputs = [func(list_inputs)[0] for func in funcs]
     for layer_activations in layer_outputs:
         activations.append(layer_activations)
@@ -41,18 +47,26 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
 
     return activations
 
-path = "/home/hillerton/results/2018-03-29_ae_keras_run/deep_ae/regression/"
-model = path+"regression_model.h5"
+#gives output dire 
+path = "/home/hillerton/results/2018-03-29_ae_keras_run/deep_ae/"
+#gives which model to use, must be a trained and functional keras model in h5 format
+model = path+"AE_model.h5"
+#gives data to run through model
 data = "/home/hillerton/Data/intersect_1000g_cancer/212_cancer/bed_files/"
+#gives what layer should be extracted. Layer names can be found via tensorboard or if name was given in the original code for the model
+want_layer = "leaky_re_lu_1"
 
 ae_model = load_model(model)
 
 bed_data, bim = biallelic_to_onehot.onehot(data)
+del (bim)
 bed_data = np.swapaxes(bed_data, 0, 1)
 
-activation = get_activations(ae_model, bed_data, layer_name="leaky_re_lu_1")
+activation = get_activations(ae_model, bed_data, layer_name=want_layer)
 
 fil = open(path+"leaky_relu_activation.csv", "a+")
 
+#prints output to file 
 for i in activation:
     np.savetxt(fil, i, delimiter="\t")
+    print(i.shape)
